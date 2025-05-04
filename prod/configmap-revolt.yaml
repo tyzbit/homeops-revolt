@@ -1,0 +1,250 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: revolt
+  namespace: homeops-revolt
+data:
+  invite_mongo_query: |
+    use revolt
+    db.invites.insertOne({ _id: "inviteidhere" })
+  Revolt.toml: |
+    # https://github.com/revoltchat/backend/blob/main/crates/core/config/Revolt.toml
+    production = true
+
+    [hosts]
+    app = "https://${homeops_revolt_domain}"
+    api = "https://${homeops_revolt_domain}/api"
+    events = "wss://${homeops_revolt_domain}/ws"
+    autumn = "https://${homeops_revolt_domain}/autumn"
+    january = "https://${homeops_revolt_domain}/january"
+    # voso_legacy = "https://${homeops_revolt_domain}/vortex-http"
+    voso_legacy = "http://homeops-revolt-vortex:8080"
+    voso_legacy_ws = "wss://${homeops_revolt_domain}/vortex-ws"
+
+
+    [database]
+    mongodb = "mongodb://homeops-revolt-mongo:27017"
+    redis = "redis://homeops-revolt-redis:6379/"
+
+    [rabbit]
+    host = "homeops-revolt-rabbit"
+    port = 5672
+    username = "rabbitmq"
+    password = "${revolt_homeops_rabbitmq_password}"
+
+    [api]
+    [api.registration]
+    # Whether an invite should be required for registration
+    # See https://github.com/revoltchat/self-hosted#making-your-instance-invite-only
+    invite_only = false
+
+    [api.smtp]
+    # Email server configuration for verification
+    # Defaults to no email verification (host field is empty)
+    host = "email-smtp.us-east-1.amazonaws.com"
+    username = "${revolt_homeops_smtp_user}"
+    password = "${revolt_homeops_smtp_password}"
+    from_address = "revolt@${homeops_revolt_domain}"
+    reply_to = "noreply@${homeops_revolt_domain}"
+
+    [api.security]
+    # Authifier Shield API key
+    authifier_shield_key = ""
+    # Legacy voice server management token
+    voso_legacy_token = "${revolt_homeops_vortex_manage_token}"
+    # Whether services are behind the Cloudflare network
+    trust_cloudflare = false
+
+    [api.security.captcha]
+    # hCaptcha configuration
+    hcaptcha_key = "${revolt_homeops_hcaptcha_key}"
+    hcaptcha_sitekey = "${revolt_homeops_hcaptcha_sitekey}"
+
+    [api.workers]
+    # Maximum concurrent connections (to proxy server)
+    max_concurrent_connections = 50
+
+    [api.users]
+    [pushd]
+    # this changes the names of the queues to not overlap
+    # prod/beta if they happen to be on the same exchange/instance.
+    # Usually they have to be, so that messages sent from one or the other get sent
+    # to everyone
+    production = true
+    # Changes how many users are processed in each chunk when resolving
+    # role/everyone mentions.
+    # Increasing this will resolve mentions faster, but will consume more memory
+    # while resolving.
+    mass_mention_chunk_size = 200
+    # none of these should need changing
+    exchange = "revolt.notifications"
+    message_queue = "notifications.origin.message"
+    mass_mention_queue = "notifications.origin.mass_mention" # handles messages thatcontain role or everyone mentions
+    fr_accepted_queue = "notifications.ingest.fr_accepted"   # friend request accepted
+    fr_received_queue = "notifications.ingest.fr_received"   # friend request received
+    generic_queue = "notifications.ingest.generic"           # generic messages (title + body)
+    ack_queue = "notifications.process.ack"                  # updates badges for apple devices
+
+    [pushd.vapid]
+    private_key = "${revolt_homeops_private_key}"
+    public_key = "${revolt_homeops_public_key}"
+
+    [pushd.fcm]
+    queue = "notifications.outbound.fcm"
+    key_type = ""
+    project_id = ""
+    private_key_id = ""
+    private_key = ""
+    client_email = ""
+    client_id = ""
+    auth_uri = ""
+    token_uri = ""
+    auth_provider_x509_cert_url = ""
+    client_x509_cert_url = ""
+
+    [pushd.apn]
+    sandbox = false
+    queue = "notifications.outbound.apn"
+    pkcs8 = ""
+    key_id = ""
+    team_id = ""
+
+    [files]
+    encryption_key = "${revolt_homeops_encryption_key}"
+    # Quality used for lossy WebP previews (set to 100 for lossless)
+    webp_quality = 80.0
+    # Mime types that cannot be uploaded or served
+    #
+    # Example for Windows executables and Android installation files:
+    # ["application/vnd.microsoft.portable-executable", "application/vnd.android.package-archive"]
+    blocked_mime_types = []
+    # ClamAV service
+    # hostname:port
+    clamd_host = ""
+    # Mime types that should be virus scanned
+    #
+    # Leave empty to scan all file types
+    scan_mime_types = [
+        "application/vnd.microsoft.portable-executable",
+        "application/vnd.android.package-archive",
+        "application/zip",
+    ]
+    [files.limit]
+    # Minimum file size (in bytes)
+    min_file_size = 1
+    # Minimum image resolution
+    min_resolution = [1, 1]
+    # Maximum MP of images
+    max_mega_pixels = 40
+    # Maximum pixel side of an image
+    max_pixel_side = 10_000
+
+    [files.preview]
+    # Maximum image resolution
+    attachments = [1280, 1280]
+    avatars = [128, 128]
+    backgrounds = [1280, 720]
+    icons = [128, 128]
+    banners = [480, 480]
+    emojis = [128, 128]
+    [files.s3]
+    # Configuration for S3
+    # Defaults included for MinIO + self-hosted setup
+    #
+    # Backblaze B2:
+    # - endpoint is listed on the "Buckets" page
+    # - path_style_buckets is set to true
+    # - region is `eu-central-003` string from endpoint URL
+    # - access_key_id is keyID generated on the "Application Keys" page
+    # - secret_access_key is token generated on the "Application Keys" page
+    # - default_bucket matches the name of the bucket you've created
+
+    # S3 protocol endpoint
+
+    endpoint = "http://homeops-revolt-minio:9000"
+    # Whether to use path-style buckets
+    # Generally true, except for MinIO
+    path_style_buckets = true
+    # S3 region name
+    region = "minio"
+    # S3 protocol key ID
+    access_key_id = "minioautumn"
+    # S3 protocol access key
+    secret_access_key = "${revolt_homeops_minio_password}"
+    default_bucket = "homeops-revolt-uploads"
+
+    [features]
+    # Feature gate options
+    webhooks_enabled = false
+
+    [features.limits]
+
+    [features.limits.global]
+    group_size = 100
+    message_embeds = 5
+    message_replies = 5
+    message_reactions = 20
+    server_emoji = 100
+    server_roles = 200
+    server_channels = 200
+
+    # How many hours since creation a user is considered new
+    new_user_hours = 72
+
+    # Maximum permissible body size in bytes for uploads
+    # (should be greater than any one file upload limit)
+    body_limit_size = 100_000_000
+
+    [features.limits.new_user]
+    # Limits imposed on new users
+
+    # Number of outgoing friend requests permitted at any time
+    outgoing_friend_requests = 5
+
+    # Maximum number of owned bots
+    bots = 2
+
+    # Message content length
+    message_length = 2000
+
+    # Number of attachments that can be included
+    message_attachments = 5
+
+    # Maximum number of servers the user can create/join
+    servers = 50
+
+    [features.limits.new_user.file_upload_size_limit]
+    # Maximum file size limits (in bytes)
+    attachments = 50_000_000
+    avatars = 8_000_000
+    backgrounds = 12_000_000
+    icons = 5_000_000
+    banners = 12_000_000
+    emojis = 500_000
+
+    [features.limits.default]
+    # Limits imposed on users by default
+
+    # Number of outgoing friend requests permitted at any time
+    outgoing_friend_requests = 10
+
+    # Maximum number of owned bots
+    bots = 5
+
+    # Message content length
+    message_length = 2000
+
+    # Number of attachments that can be included
+    message_attachments = 5
+
+    # Maximum number of servers the user can create/join
+    servers = 100
+
+    [features.limits.default.file_upload_size_limit]
+    # Maximum file size limits (in bytes)
+    attachments = 50_000_000
+    avatars = 8_000_000
+    backgrounds = 12_000_000
+    icons = 5_000_000
+    banners = 12_000_000
+    emojis = 500_000

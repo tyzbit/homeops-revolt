@@ -1,0 +1,54 @@
+---
+# Storage classes should be overridden in the Kustomization
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeops-revolt-mongo
+  namespace: homeops-revolt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeops-revolt-rabbit
+  namespace: homeops-revolt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeops-revolt-minio
+  namespace: homeops-revolt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homeops-revolt-redis
+  namespace: homeops-revolt
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi

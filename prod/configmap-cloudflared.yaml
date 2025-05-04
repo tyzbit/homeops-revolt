@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: homeops-revolt
+data:
+  config.yaml: |
+    tunnel: ${homeops_cloudflared_tunnel_uuid}
+    credentials-file: /etc/cloudflared/cred.json
+    originRequest:
+      connectTimeout: 30s
+      noTLSVerify: true
+    warp-routing:
+      enabled: false
+
+    ingress:
+      - hostname: ${homeops_revolt_domain}
+        service: https://kube-system-ingress-nginx-controller.kube-system
+      - service: http_status:404

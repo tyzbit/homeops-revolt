@@ -1,0 +1,24 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app homeops-revolt
+  namespace: flux-system
+spec:
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+
+  wait: false
+  prune: true
+
+  path: "./clusters/corpus/apps/personal/homeops-revolt"
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  dependsOn: [{ name: homeops-revolt, namespace: flux-system }]
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: *app
+        optional: false
