@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Secret
 metadata:
     name: homeops-revolt-prod
-    namespace: homeops-revolt
+    namespace: flux-system
 stringData:
     homeops_revolt_domain: ENC[AES256_GCM,data:YzXJ979/K0Enu4p3ZmXHrdfu,iv:OFK+XzPIDz6YwKEgrbxw51mTcFBH8N+R87ZOVJB6+8A=,tag:G0RVfy+9vMueCAPr9bfheA==,type:str]
     homeops_cloudflared_tunnel_uuid: ENC[AES256_GCM,data:hjc/Niu7UsHtiIszfHqZ7JfzkSAaIvS5FG5GqdkpBbV52Smu,iv:/t14MKhBG6NYBl4CNOdSYHDlqbpA7olKq7uYVhiazn0=,tag:CZXOua18LlVPBZLVon9pww==,type:str]
@@ -22,8 +22,8 @@ sops:
     azure_kv: []
     hc_vault: []
     age: []
-    lastmodified: "2025-05-04T19:41:40Z"
-    mac: ENC[AES256_GCM,data:4mvLHMbzF0IzDnfXYwMZb20DizOBR88N0/8WptpZHraUhjh83X/NUmxavvtZOpj70zmvd1H7y8NaxkhdXN28fb2UW7i1LXFhh7xIgrkbv1AbS1Jb/IRJBWGcah8tmRO2HD45RUeP7pWG4TxCYPaeX/yJxVgzD2ORhxHf6E5Y5Sc=,iv:CZl1KFhsFMXP2Icth6oOhT7l5Cj//1idrjHfr32b5K0=,tag:eaULEhEc32OIdmh2rfhZnw==,type:str]
+    lastmodified: "2025-05-05T01:15:37Z"
+    mac: ENC[AES256_GCM,data:nsMjakY1OdLPp9u2tAFd3FJjWnHzuOdK8XuA4B9QRvpekbp7LVToImc/GK8yw2xd+iFlSwagt4OWWy6PBQomg00LhBRKT0/8cCQSpiKknIQhf5y9kZ9D8WP+XwbMUL4Fd7czVxin/Ye5cCZCwNx1Du0Ln0/If8hBMA92kLGKbQ0=,iv:hcCTS6IbT+Od3NPbxsoEomPsmMNAmBJoTpJyte8A1hI=,tag:xVdw1Qb4rN3lrEIXyUm/yg==,type:str]
     pgp:
         - created_at: "2025-05-04T19:05:47Z"
           enc: |-
