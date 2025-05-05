@@ -74,7 +74,7 @@ spec:
                 readOnly: true
                 subPath: config.yaml
       credentials:
-        name: homeops-revolt-prod-cloudflared-cred
+        name: homeops-revolt--cloudflared-cred
         type: secret
         advancedMounts:
           *app :
